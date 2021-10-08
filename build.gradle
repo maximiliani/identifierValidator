@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+}
+
+group 'edu.kit.scc.dem'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.enabled = false
+        csv.enabled = false
+        xml.enabled = true
+    }
+}

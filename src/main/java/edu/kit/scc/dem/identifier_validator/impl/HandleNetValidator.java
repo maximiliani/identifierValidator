@@ -1,0 +1,37 @@
+/*
+ * Copyright 2021 Karlsruhe Institute of Technology.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package edu.kit.scc.dem.identifier_validator.impl;
+
+import edu.kit.scc.dem.identifier_validator.ValidatorInterface;
+import edu.kit.scc.dem.identifier_validator.exceptions.*;
+
+/**
+ * This class validates Handles with help of handle.net.
+ */
+public class HandleNetValidator implements ValidatorInterface {
+
+    /**
+     * This method does the validation work.
+     *
+     * @return true if the input is valid.
+     * @throws ValidationError   if the input is invalid.
+     * @throws ValidationWarning if there was an internal error, which doesn't mean directly that the input is invalid.
+     */
+    @Override
+    public boolean isValid(String input) throws ValidationError, ValidationWarning {
+        return true;
+    }
+}
