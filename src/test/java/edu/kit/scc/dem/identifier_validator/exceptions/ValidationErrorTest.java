@@ -13,7 +13,20 @@
  * limitations under the License.
  */
 
-package edu.kit.scc.dem.identifier_validator;
+package edu.kit.scc.dem.identifier_validator.exceptions;
 
-public class ValidationWarningTest {
+import org.junit.jupiter.api.Test;
+
+class ValidationErrorTest {
+
+    @Test
+    void newWithParam() {
+        Exception exception = new ValidationError("Test", new Exception());
+    }
+
+    @Test
+    void newWithoutParam() {
+        Exception exception = new ValidationError();
+    }
+
 }

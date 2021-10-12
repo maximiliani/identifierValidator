@@ -15,8 +15,23 @@
 
 package edu.kit.scc.dem.identifier_validator;
 
+import edu.kit.scc.dem.identifier_validator.exceptions.ValidationError;
+import edu.kit.scc.dem.identifier_validator.exceptions.ValidationWarning;
+import edu.kit.scc.dem.identifier_validator.impl.HandleNetValidator;
 import org.junit.jupiter.api.Test;
 
-public class HandleNetValidatorTest {
+import static org.junit.jupiter.api.Assertions.*;
 
+class ValidatorInterfaceTest {
+
+    ValidatorInterface validatorInterface = new HandleNetValidator();
+
+    @Test
+    void isValid() {
+        try {
+            validatorInterface.isValid("hdl://10.1038/nphys1170");
+        } catch (ValidationError | ValidationWarning e) {
+            fail(e);
+        }
+    }
 }

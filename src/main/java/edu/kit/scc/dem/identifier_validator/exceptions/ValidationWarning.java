@@ -23,7 +23,7 @@ package edu.kit.scc.dem.identifier_validator.exceptions;
  *
  * @author maximilianiKIT
  */
-public class ValidationWarning extends Exception{
+public class ValidationWarning extends Exception {
 
     /**
      * This constructor expects an errorMessage and a Throwable for more information.
