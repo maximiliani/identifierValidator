@@ -46,11 +46,11 @@ public class HandleNetValidator implements ValidatorInterface {
      */
     @Override
     public boolean isValid(String input) throws ValidationWarning, ValidationError {
-        String regex = "^(hdl|http|https)\\:\\/\\/(.+)";
+        String regex = "^(hdl\\:\\/\\/|http\\:\\/\\/|https\\:\\/\\/|doi\\:)(.+)";
         Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(input);
         if (matcher.find()) {
-            if (matcher.group(1).equals("https") || matcher.group(1).equals("http"))
+            if (matcher.group(1).equals("https://") || matcher.group(1).equals("http://"))
                 return isValidHTTPURL(matcher.group(0));
             else return isValidHandle(matcher.group(2));
         } else throw new ValidationError("Invalid input", new ValidationError());
@@ -67,47 +67,19 @@ public class HandleNetValidator implements ValidatorInterface {
      * @throws ValidationWarning if an error occurs (e.g. no internet connection, invalid prefix or suffix). For further information read the error message or the log.
      */
     public boolean isDownloadable(String serverAddress, String prefix, String suffix) throws ValidationWarning {
-        URL url = null;
-        HttpURLConnection con = null;
         int status = 0;
-
-        try {
-            url = new URL(serverAddress + "/" + prefix + "/" + suffix);
-            con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            status = con.getResponseCode();
-        } catch (ProtocolException e) {
-            log.warn("Error while setting request method");
-            throw new ValidationWarning("Error setting request method", e);
-        } catch (MalformedURLException e) {
-            log.warn("Invalid URL");
-            throw new ValidationWarning("Invalid URL", e);
-        } catch (IOException e) {
-            log.warn("IOException: Please check if you have internet access.");
-            throw new ValidationWarning("IOException: Do you have an internet connection?", e);
-        }
-
+        status = getURLStatus(serverAddress + "/" + prefix + "/" + suffix);
+        System.out.println(serverAddress + "/" + prefix + "/" + suffix);
+        System.out.println(status);
         if (status != 200) {
             log.warn("Either the suffix or the prefix might be invalid. Proving if prefix is valid...");
-            try {
-                url = new URL("https://hdl.handle.net/0.NA" + prefix);
-                con = (HttpURLConnection) url.openConnection();
-                con.setRequestMethod("GET");
-                status = con.getResponseCode();
-            } catch (ProtocolException e) {
-                log.warn("Error while setting request method");
-                throw new ValidationWarning("Error setting request method", e);
-            } catch (MalformedURLException e) {
-                log.warn("Invalid URL");
-                throw new ValidationWarning("Invalid URL", e);
-            } catch (IOException e) {
-                log.warn("IOException: Please check if you have internet access.");
-                throw new ValidationWarning("IOException: Do you have an internet connection?", e);
-            }
+            status = getURLStatus("https://hdl.handle.net/0.NA/" + prefix);
             if (status != 200) {
                 log.error("The entered prefix is invalid!");
                 throw new ValidationWarning("Prefix not provable on handle.net", new ValidationError());
             }
+            log.info("The prefix {} is valid!", prefix);
+            throw new ValidationWarning("Prefix valid, but suffix not", new ValidationWarning());
         }
         log.info("The prefix and suffix are valid.");
         return true;

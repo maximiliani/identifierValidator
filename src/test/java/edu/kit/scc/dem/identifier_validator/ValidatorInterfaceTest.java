@@ -27,11 +27,66 @@ class ValidatorInterfaceTest {
     ValidatorInterface validatorInterface = new HandleNetValidator();
 
     @Test
-    void isValid() {
+    void valid_isValid() {
         try {
             validatorInterface.isValid("hdl://10.1038/nphys1170");
         } catch (ValidationError | ValidationWarning e) {
             fail(e);
+        }
+    }
+
+
+    @Test
+    void valid_isDownloadable() {
+        try {
+            assertTrue(validatorInterface.getURLStatus("http://hdl.handle.net/api/handles/10.1038/nphys1170") == 200);
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void invalidURL_isDownloadable() {
+        try {
+            assertFalse(validatorInterface.getURLStatus("hdl.handle/10.1038/nphys1170") == 200);
+        } catch (ValidationWarning e) {
+            ;
+        }
+    }
+
+    @Test
+    void serverNotReachable_isDownloadable() {
+        try {
+            assertFalse(validatorInterface.getURLStatus("https://hdl.test.example/10.1038/nphys1170") == 200);
+        } catch (ValidationWarning e) {
+            ;
+        }
+    }
+
+    @Test
+    void invalidPrefix_isDownloadable() {
+        try {
+            assertFalse(validatorInterface.getURLStatus("http://hdl.handle.net/api/handles/10.10385/nphys1170") == 200);
+        } catch (ValidationWarning e) {
+            ;
+        }
+    }
+
+    @Test
+    void invalidSuffix_isDownloadable() {
+        try {
+            assertFalse(validatorInterface.getURLStatus("http://hdl.handle.net/api/handles/10.1038/nphys1170.345678") == 200);
+        } catch (ValidationWarning e) {
+            ;
+        }
+    }
+
+    @Test
+    void invalidCharacters_isDownloadable() {
+        try {
+            assertFalse(validatorInterface.getURLStatus("http://google.com/®¡“¢∂‚/®¡“¢∂‚") == 200);
+        } catch (ValidationWarning e) {
+            ;
         }
     }
 }

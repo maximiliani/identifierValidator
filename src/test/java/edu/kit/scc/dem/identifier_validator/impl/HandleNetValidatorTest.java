@@ -20,17 +20,10 @@ import edu.kit.scc.dem.identifier_validator.exceptions.ValidationWarning;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @ExtendWith(MockitoExtension.class)
@@ -157,7 +150,7 @@ class HandleNetValidatorTest {
     @Test
     void invalidSuffix_isDownloadable() {
         try {
-            assertFalse(validator.isDownloadable("http://hdl.handle.net/api/handles", "10.1038", "nphys1170.345678"));
+            assertFalse(validator.isDownloadable("10.1038", "nphys1170.345678"));
         } catch (ValidationWarning e) {
             ;
         }

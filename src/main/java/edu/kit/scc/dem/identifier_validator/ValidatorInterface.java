@@ -16,11 +16,21 @@
 package edu.kit.scc.dem.identifier_validator;
 
 import edu.kit.scc.dem.identifier_validator.exceptions.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 
 /**
  * This interface provides a method which is necessary to validate things.
  */
 public interface ValidatorInterface {
+
+    Logger log = LoggerFactory.getLogger(ValidatorInterface.class);
 
     /**
      * This method must be implemented by any implementation.
@@ -32,4 +42,33 @@ public interface ValidatorInterface {
      * @throws ValidationWarning if there is a chance that the input could be valid. (e.g. Validation server not reachable. Additional information should be provided with logs and the exception message.
      */
     boolean isValid(String input) throws ValidationError, ValidationWarning;
+
+    /**
+     * This method checks if a URL is available.
+     *
+     * @param url to check
+     * @return HTTP status code (e.g. 200 for OK)
+     * @throws ValidationWarning if there is an error (e.g. server not reachable).
+     */
+    default int getURLStatus(String url) throws ValidationWarning {
+        URL urlHandler = null;
+        HttpURLConnection con = null;
+        int status = 0;
+        try {
+            urlHandler = new URL(url);
+            con = (HttpURLConnection) urlHandler.openConnection();
+            con.setRequestMethod("GET");
+            status = con.getResponseCode();
+        } catch (ProtocolException e) {
+            log.warn("Error while setting request method");
+            throw new ValidationWarning("Error setting request method", e);
+        } catch (MalformedURLException e) {
+            log.warn("Invalid URL");
+            throw new ValidationWarning("Invalid URL", e);
+        } catch (IOException e) {
+            log.warn("IOException: Please check if you have internet access.");
+            throw new ValidationWarning("IOException: Do you have an internet connection?", e);
+        }
+        return status;
+    }
 }
