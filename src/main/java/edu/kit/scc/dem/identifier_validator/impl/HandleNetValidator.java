@@ -17,12 +17,6 @@ package edu.kit.scc.dem.identifier_validator.impl;
 
 import edu.kit.scc.dem.identifier_validator.ValidatorInterface;
 import edu.kit.scc.dem.identifier_validator.exceptions.*;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,8 +63,8 @@ public class HandleNetValidator implements ValidatorInterface {
     public boolean isDownloadable(String serverAddress, String prefix, String suffix) throws ValidationWarning {
         int status = 0;
         status = getURLStatus(serverAddress + "/" + prefix + "/" + suffix);
-        System.out.println(serverAddress + "/" + prefix + "/" + suffix);
-        System.out.println(status);
+        log.debug(serverAddress + "/" + prefix + "/" + suffix);
+        log.debug(String.valueOf(status));
         if (status != 200) {
             log.warn("Either the suffix or the prefix might be invalid. Proving if prefix is valid...");
             status = getURLStatus("https://hdl.handle.net/0.NA/" + prefix);
