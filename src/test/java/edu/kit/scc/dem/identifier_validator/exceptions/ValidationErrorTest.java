@@ -15,6 +15,7 @@
 
 package edu.kit.scc.dem.identifier_validator.exceptions;
 
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
 import org.junit.jupiter.api.Test;
 
 class ValidationErrorTest {

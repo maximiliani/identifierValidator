@@ -13,9 +13,10 @@
  * limitations under the License.
  */
 
-package edu.kit.scc.dem.identifier_validator;
+package edu.kit.datamanager.datacite.validate;
 
-import edu.kit.scc.dem.identifier_validator.exceptions.*;
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +31,14 @@ import java.net.URL;
  */
 public interface ValidatorInterface {
 
-    Logger log = LoggerFactory.getLogger(ValidatorInterface.class);
-
+  Logger LOG = LoggerFactory.getLogger(ValidatorInterface.class);
+  // see edu.kit.datamanager:service-base:0.3.0
+    RelatedIdentifierType supportedType();
+    // Write a Main class
+     //Use plugin mechanism to find all available validators.
+    // Store them in a map<RelatedIdentifierType, validator>
+    // e.g.: https://www.java-blog-buch.de/d-plugin-entwicklung-in-java/
+    
     /**
      * This method must be implemented by any implementation.
      * It validates an input and either returns true or throws an exception.
@@ -41,7 +48,11 @@ public interface ValidatorInterface {
      * @throws ValidationError   if the input is invalid and definitively unusable.
      * @throws ValidationWarning if there is a chance that the input could be valid. (e.g. Validation server not reachable. Additional information should be provided with logs and the exception message.
      */
-    boolean isValid(String input) throws ValidationError, ValidationWarning;
+    default boolean isValid(String input) throws ValidationError, ValidationWarning {
+      return isValid(input, supportedType());
+    }
+    
+    boolean isValid(String input, RelatedIdentifierType) throws ValidationError, ValidationWarning;
 
     /**
      * This method checks if a URL is available.
@@ -50,6 +61,9 @@ public interface ValidatorInterface {
      * @return HTTP status code (e.g. 200 for OK)
      * @throws ValidationWarning if there is an error (e.g. server not reachable).
      */
+    
+    move this method to edu.kit.datamanager.datacite.validate.impl.UrlValidator
+    could be also reused by DOIValidator
     default int getURLStatus(String url) throws ValidationWarning {
         URL urlHandler = null;
         HttpURLConnection con = null;
@@ -60,13 +74,13 @@ public interface ValidatorInterface {
             con.setRequestMethod("GET");
             status = con.getResponseCode();
         } catch (ProtocolException e) {
-            log.warn("Error while setting request method");
+            LOG.warn("Error while setting request method");
             throw new ValidationWarning("Error setting request method", e);
         } catch (MalformedURLException e) {
-            log.warn("Invalid URL");
+            LOG.warn("Invalid URL");
             throw new ValidationWarning("Invalid URL", e);
         } catch (IOException e) {
-            log.warn("IOException: Please check if you have internet access.");
+            LOG.warn("IOException: Please check if you have internet access.");
             throw new ValidationWarning("IOException: Do you have an internet connection?", e);
         }
         return status;

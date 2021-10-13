@@ -13,10 +13,11 @@
  * limitations under the License.
  */
 
-package edu.kit.scc.dem.identifier_validator.impl;
+package edu.kit.datamanager.datacite.validate.impl;
 
-import edu.kit.scc.dem.identifier_validator.ValidatorInterface;
-import edu.kit.scc.dem.identifier_validator.exceptions.*;
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
+import edu.kit.datamanager.datacite.validate.ValidatorInterface;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -100,6 +101,7 @@ public class HandleNetValidator implements ValidatorInterface {
      * @throws ValidationWarning from isDownloadable. Contains further information in the message or in the log.
      * @throws ValidationError   if the input is invalid.
      */
+    Why not using UrlValidator!?
     public boolean isValidHTTPURL(String url) throws ValidationWarning, ValidationError {
         String regex = "(http|https)\\:\\/\\/(.+)\\/([A-Za-z0-9.]+)\\/([A-Za-z0-9.]+)";
         Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);

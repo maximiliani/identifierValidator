@@ -13,16 +13,17 @@
  * limitations under the License.
  */
 
-package edu.kit.scc.dem.identifier_validator.exceptions;
+package edu.kit.datamanager.datacite.validate.exceptions;
 
 /**
- * This class defines a custom exception for errors during the validation process.
- * An error in this case can be defined as a malfunction that significantly affects the subsequent work with the return value of a function (e.g. an invalid input).
- * If a ValidationError is thrown, this ValidationError has a higher importance than a ValidationWarning.
+ * This class defines a custom exception for warnings during the validation process.
+ * This exception is thrown when a result affects a subsequent method, but an error cannot be ruled out, for example, due to external circumstances that also apply for the calling method.
+ * This case occurs, for example, when an input is to be checked using the Internet and no connection can be established, but based on a local possibility check (e.g. regex) the input seems possible.
+ * A Validation Warning has always less importance than a ValidationError.
  *
  * @author maximilianiKIT
  */
-public class ValidationError extends Exception {
+public class ValidationWarning extends Exception {
 
     /**
      * This constructor expects an errorMessage and a Throwable for more information.
@@ -30,14 +31,14 @@ public class ValidationError extends Exception {
      * @param errorMessage is a description about what happened.
      * @param err          is a Throwable from former errors like IllegalArgumentExceptions, which are not handled by the caller class.
      */
-    public ValidationError(String errorMessage, Throwable err) {
+    public ValidationWarning(String errorMessage, Throwable err) {
         super(errorMessage, err);
     }
 
     /**
      * This is an empty constructor with no additional information.
      */
-    public ValidationError() {
+    public ValidationWarning() {
         super();
     }
 

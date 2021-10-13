@@ -15,8 +15,9 @@
 
 package edu.kit.scc.dem.identifier_validator.impl;
 
-import edu.kit.scc.dem.identifier_validator.exceptions.ValidationError;
-import edu.kit.scc.dem.identifier_validator.exceptions.ValidationWarning;
+import edu.kit.datamanager.datacite.validate.impl.HandleNetValidator;
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
