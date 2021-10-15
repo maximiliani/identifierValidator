@@ -17,31 +17,32 @@ package edu.kit.datamanager.datacite.validate;
 
 import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
 import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
+import org.datacite.schema.kernel_4.RelatedIdentifierType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 
 /**
  * This interface provides a method which is necessary to validate things.
  */
 public interface ValidatorInterface {
 
-  Logger LOG = LoggerFactory.getLogger(ValidatorInterface.class);
-  // see edu.kit.datamanager:service-base:0.3.0
-    RelatedIdentifierType supportedType();
-    // Write a Main class
-     //Use plugin mechanism to find all available validators.
-    // Store them in a map<RelatedIdentifierType, validator>
-    // e.g.: https://www.java-blog-buch.de/d-plugin-entwicklung-in-java/
-    
+    Logger LOG = LoggerFactory.getLogger(ValidatorInterface.class);
+
     /**
-     * This method must be implemented by any implementation.
-     * It validates an input and either returns true or throws an exception.
+     * This method returns the type of the validator implementation.
+     *
+     * @return element of the enum defined in the Datacite schema.
+     */
+    RelatedIdentifierType supportedType();
+
+//     TODO Write a Main class
+//      Use plugin mechanism to find all available validators.
+//      Store them in a map<RelatedIdentifierType, validator>
+//      e.g.: https://www.java-blog-buch.de/d-plugin-entwicklung-in-java/
+
+    /**
+     * This method is a shortcut for isValid.
+     * It doesn't require the type parameter and sets the type of the implementation instead.
      *
      * @param input to validate
      * @return true if input is valid for the special type of implementation
@@ -49,40 +50,19 @@ public interface ValidatorInterface {
      * @throws ValidationWarning if there is a chance that the input could be valid. (e.g. Validation server not reachable. Additional information should be provided with logs and the exception message.
      */
     default boolean isValid(String input) throws ValidationError, ValidationWarning {
-      return isValid(input, supportedType());
+        return isValid(input, supportedType());
     }
-    
-    boolean isValid(String input, RelatedIdentifierType) throws ValidationError, ValidationWarning;
 
     /**
-     * This method checks if a URL is available.
+     * This method must be implemented by any implementation.
+     * It validates an input and either returns true or throws an exception.
      *
-     * @param url to check
-     * @return HTTP status code (e.g. 200 for OK)
-     * @throws ValidationWarning if there is an error (e.g. server not reachable).
+     * @param input to validate
+     * @param type  of the input
+     * @return true if input is valid for the special type of implementation.
+     * @throws ValidationError   if the input is invalid and definitively unusable.
+     * @throws ValidationWarning if there is a chance that the input could be valid. (e.g. Validation server not reachable. Additional information should be provided with logs and the exception message.
      */
-    
-    move this method to edu.kit.datamanager.datacite.validate.impl.UrlValidator
-    could be also reused by DOIValidator
-    default int getURLStatus(String url) throws ValidationWarning {
-        URL urlHandler = null;
-        HttpURLConnection con = null;
-        int status = 0;
-        try {
-            urlHandler = new URL(url);
-            con = (HttpURLConnection) urlHandler.openConnection();
-            con.setRequestMethod("GET");
-            status = con.getResponseCode();
-        } catch (ProtocolException e) {
-            LOG.warn("Error while setting request method");
-            throw new ValidationWarning("Error setting request method", e);
-        } catch (MalformedURLException e) {
-            LOG.warn("Invalid URL");
-            throw new ValidationWarning("Invalid URL", e);
-        } catch (IOException e) {
-            LOG.warn("IOException: Please check if you have internet access.");
-            throw new ValidationWarning("IOException: Do you have an internet connection?", e);
-        }
-        return status;
-    }
+    boolean isValid(String input, RelatedIdentifierType type) throws ValidationError, ValidationWarning;
+
 }

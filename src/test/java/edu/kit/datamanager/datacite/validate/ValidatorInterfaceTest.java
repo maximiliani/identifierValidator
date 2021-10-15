@@ -13,23 +13,29 @@
  * limitations under the License.
  */
 
-package edu.kit.scc.dem.identifier_validator.exceptions;
+package edu.kit.datamanager.datacite.validate;
 
+import edu.kit.datamanager.datacite.validate.ValidatorInterface;
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
 import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
+import edu.kit.datamanager.datacite.validate.impl.HandleNetValidator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ValidationWarningTest {
+class ValidatorInterfaceTest {
+
+    ValidatorInterface validatorInterface = new HandleNetValidator();
 
     @Test
-    void newWithParam() {
-        Exception exception = new ValidationWarning("Test", new Exception());
+    void valid_isValid() {
+        try {
+            validatorInterface.isValid("hdl://10.1038/nphys1170");
+        } catch (ValidationError | ValidationWarning e) {
+            fail(e);
+        }
     }
 
-    @Test
-    void newWithoutParam() {
-        Exception exception = new ValidationWarning();
-    }
+
 
 }

@@ -13,21 +13,20 @@
  * limitations under the License.
  */
 
-package edu.kit.scc.dem.identifier_validator.exceptions;
+package edu.kit.datamanager.datacite.validate.exceptions;
 
-import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
 import org.junit.jupiter.api.Test;
 
-class ValidationErrorTest {
+class ValidationWarningTest {
 
     @Test
     void newWithParam() {
-        Exception exception = new ValidationError("Test", new Exception());
+        Exception exception = new ValidationWarning("Test", new Exception());
     }
 
     @Test
-    void newWithoutParam() {
-        Exception exception = new ValidationError();
+    void newWithMessageParam() {
+        Exception exception = new ValidationWarning("test");
     }
 
 }

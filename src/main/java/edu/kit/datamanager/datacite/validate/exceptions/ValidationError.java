@@ -35,10 +35,12 @@ public class ValidationError extends Exception {
     }
 
     /**
-     * This is an empty constructor with no additional information.
+     * This constructor expects an errorMessage for more information.
+     *
+     * @param errorMessage is a description about what happened.
      */
-    public ValidationError() {
-        super();
+    public ValidationError(String errorMessage) {
+        super(errorMessage);
     }
 
 }
