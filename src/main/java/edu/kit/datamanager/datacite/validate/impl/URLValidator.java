@@ -71,8 +71,8 @@ public class URLValidator implements ValidatorInterface {
             LOG.warn("Invalid URL");
             throw new ValidationError("Invalid URL", e);
         } catch (IOException e) {
-            LOG.warn("IOException: Please check if you have internet access.");
-            throw new ValidationWarning("IOException: Do you have an internet connection?", e);
+            LOG.warn("No connection to the server possible. Do you have an internet connection?");
+            throw new ValidationWarning("No connection to the server possible. Do you have an internet connection?", e);
         }
     }
 }

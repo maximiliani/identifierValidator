@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,8 +38,8 @@ public class GenericValidator {
         Map<RelatedIdentifierType, ValidatorInterface> validators1;
         try {
             validators1 = PluginLoader.loadPlugins(new File("./plugins"));
-        } catch (IOException e) {
-            LOG.info("No plugins loaded.");
+        } catch (Exception e) {
+            LOG.info("No plugins loaded.", e);
             validators1 = new HashMap<>();
         }
         validators1.put(RelatedIdentifierType.HANDLE, new HandleNetValidator());
@@ -58,7 +57,10 @@ public class GenericValidator {
     }
 
     public boolean isValid(String input, RelatedIdentifierType type) throws ValidationWarning, ValidationError {
-        if (validators.containsKey(type)) return validators.get(type).isValid(input, type);
+        if (validators.containsKey(type)){
+            if (validators.get(type).isValid(input, type)) LOG.info("Valid input and valid input type!");
+            return true;
+        }
         else {
             LOG.warn("No matching validator found. Please check your input and plugins.");
             throw new ValidationWarning("No matching validator found. Please check your input and plugins.");

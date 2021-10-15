@@ -35,11 +35,6 @@ public interface ValidatorInterface {
      */
     RelatedIdentifierType supportedType();
 
-//     TODO Write a Main class
-//      Use plugin mechanism to find all available validators.
-//      Store them in a map<RelatedIdentifierType, validator>
-//      e.g.: https://www.java-blog-buch.de/d-plugin-entwicklung-in-java/
-
     /**
      * This method is a shortcut for isValid.
      * It doesn't require the type parameter and sets the type of the implementation instead.

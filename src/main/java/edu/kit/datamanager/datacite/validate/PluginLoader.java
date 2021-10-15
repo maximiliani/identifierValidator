@@ -11,10 +11,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * This class was largely taken from this website: https://www.java-blog-buch.de/d-plugin-entwicklung-in-java/2/
  */
 
 package edu.kit.datamanager.datacite.validate;
 
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
 import org.datacite.schema.kernel_4.RelatedIdentifierType;
 
 import java.io.File;
@@ -31,8 +34,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 public class PluginLoader {
-    public static Map<RelatedIdentifierType, ValidatorInterface> loadPlugins(File plugDir) throws IOException {
+    public static Map<RelatedIdentifierType, ValidatorInterface> loadPlugins(File plugDir) throws IOException, ValidationWarning {
         File[] plugJars = plugDir.listFiles(new JARFileFilter());
+        if (plugJars.length == 0) throw new ValidationWarning("No plugins found.");
         ClassLoader cl = new URLClassLoader(PluginLoader.fileArrayToURLArray(plugJars));
         List<Class<ValidatorInterface>> plugClasses = PluginLoader.extractClassesFromJARs(plugJars, cl);
 
