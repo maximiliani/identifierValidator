@@ -100,10 +100,9 @@ public class HandleNetValidator implements ValidatorInterface {
         if (urlValidator.isValid("https://hdl.handle.net/0.NA/" + prefix)) {
             log.info("The prefix {} is valid!", prefix);
             throw new ValidationWarning("Prefix valid, but suffix not");
-        } else {
-            log.error("The entered prefix is invalid!");
-            throw new ValidationError("Prefix not provable on handle.net");
         }
+        log.error("The entered prefix is invalid!");
+        throw new ValidationError("Prefix not provable on handle.net");
     }
 
     /**
