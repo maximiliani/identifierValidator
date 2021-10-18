@@ -1,10 +1,17 @@
 plugins {
     id 'java'
     id 'jacoco'
+    id 'application'
+    id "com.github.johnrengelman.shadow" version "7.1.0"
 }
 
+mainClassName = 'edu.kit.datamanager.datacite.validate.GenericValidator'
 group 'edu.kit.datamanager'
 version '1.0-SNAPSHOT'
+
+println "Building ${name} version: ${version}"
+println "Running gradle version: $gradle.gradleVersion"
+println "JDK version: ${JavaVersion.current()}"
 
 repositories {
     mavenCentral()
@@ -26,6 +33,12 @@ dependencies {
 
     implementation 'org.slf4j:slf4j-api:1.7.32'
     implementation 'ch.qos.logback:logback-classic:1.2.6'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'edu.kit.datamanager.datacite.validate.GenericValidator'
+    }
 }
 
 test {

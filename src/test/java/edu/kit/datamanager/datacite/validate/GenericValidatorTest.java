@@ -53,4 +53,9 @@ class GenericValidatorTest {
         } catch (ValidationWarning e) {
         }
     }
+
+    @Test
+    void main() {
+        GenericValidator.soleInstance().main(new String[] {});
+    }
 }

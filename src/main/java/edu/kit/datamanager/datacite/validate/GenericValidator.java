@@ -49,7 +49,7 @@ public class GenericValidator {
     }
 
     private GenericValidator() {
-        // enforce singularity
+        // enforces singularity
     }
 
     public static GenericValidator soleInstance() {
@@ -64,6 +64,12 @@ public class GenericValidator {
         else {
             LOG.warn("No matching validator found. Please check your input and plugins.");
             throw new ValidationWarning("No matching validator found. Please check your input and plugins.");
+        }
+    }
+
+    public static void main(String[] args) {
+        for (var entry: validators.entrySet()){
+            System.out.println(entry.getValue().supportedType().toString());
         }
     }
 }

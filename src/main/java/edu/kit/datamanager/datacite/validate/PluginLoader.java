@@ -19,6 +19,8 @@ package edu.kit.datamanager.datacite.validate;
 
 import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
 import org.datacite.schema.kernel_4.RelatedIdentifierType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,9 +36,13 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 public class PluginLoader {
+
+    static Logger LOG = LoggerFactory.getLogger(PluginLoader.class);
+    
     public static Map<RelatedIdentifierType, ValidatorInterface> loadPlugins(File plugDir) throws IOException, ValidationWarning {
+        if(plugDir == null || plugDir.getAbsolutePath().isBlank()) throw new ValidationWarning("Empty input!");
         File[] plugJars = plugDir.listFiles(new JARFileFilter());
-        if (plugJars.length == 0) throw new ValidationWarning("No plugins found.");
+        if (plugJars == null || plugJars.length < 1) throw new ValidationWarning("No plugins found.");
         ClassLoader cl = new URLClassLoader(PluginLoader.fileArrayToURLArray(plugJars));
         List<Class<ValidatorInterface>> plugClasses = PluginLoader.extractClassesFromJARs(plugJars, cl);
 
@@ -58,7 +64,7 @@ public class PluginLoader {
         return urls;
     }
 
-    private static List<Class<ValidatorInterface>> extractClassesFromJARs(File[] jars, ClassLoader cl) throws IOException {
+    private static List<Class<ValidatorInterface>> extractClassesFromJARs(File[] jars, ClassLoader cl) throws IOException, ValidationWarning {
 
         List<Class<ValidatorInterface>> classes = new ArrayList<Class<ValidatorInterface>>();
         for (File jar : jars) {
@@ -67,8 +73,7 @@ public class PluginLoader {
         return classes;
     }
 
-    @SuppressWarnings("unchecked")
-    private static List<Class<ValidatorInterface>> extractClassesFromJAR(File jar, ClassLoader cl) throws IOException {
+    private static List<Class<ValidatorInterface>> extractClassesFromJAR(File jar, ClassLoader cl) throws IOException, ValidationWarning {
 
         List<Class<ValidatorInterface>> classes = new ArrayList<Class<ValidatorInterface>>();
         JarInputStream jaris = new JarInputStream(new FileInputStream(jar));
@@ -81,8 +86,8 @@ public class PluginLoader {
                         classes.add((Class<ValidatorInterface>) cls);
                     }
                 } catch (ClassNotFoundException e) {
-                    System.err.println("Can't load Class " + ent.getName());
-                    e.printStackTrace();
+                    LOG.info("Can't load Class " + ent.getName());
+                    throw new ValidationWarning("Can't load Class " + ent.getName(), e);
                 }
             }
         }
@@ -100,18 +105,17 @@ public class PluginLoader {
         return false;
     }
 
-    private static List<ValidatorInterface> createPluggableObjects(List<Class<ValidatorInterface>> pluggables) {
-
+    private static List<ValidatorInterface> createPluggableObjects(List<Class<ValidatorInterface>> pluggables) throws ValidationWarning {
         List<ValidatorInterface> plugs = new ArrayList<ValidatorInterface>(pluggables.size());
         for (Class<ValidatorInterface> plug : pluggables) {
             try {
                 plugs.add(plug.newInstance());
             } catch (InstantiationException e) {
-                System.err.println("Can't instantiate plugin: " + plug.getName());
-                e.printStackTrace();
+                LOG.info("Can't instantiate plugin: " + plug.getName());
+                throw new ValidationWarning("Can't instantiate plugin: " + plug.getName(), e);
             } catch (IllegalAccessException e) {
-                System.err.println("IllegalAccess for plugin: " + plug.getName());
-                e.printStackTrace();
+                LOG.info("IllegalAccess for plugin: " + plug.getName());
+                throw new ValidationWarning("IllegalAccess for plugin: " + plug.getName(), e);
             }
         }
         return plugs;
