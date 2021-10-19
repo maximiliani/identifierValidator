@@ -35,12 +35,10 @@ class PluginLoaderTest {
     void valid() {
         Map<RelatedIdentifierType, ValidatorInterface> validators = null;
         try {
-            validators = PluginLoader.loadPlugins(new File("src/test/resources/plugins"));
+            validators = PluginLoader.loadPlugins(new File("./plugins"));
         } catch (IOException | ValidationWarning e) {
             fail(e);
         }
-        File file = new File("src/test/resources");
-        System.out.println(file.getAbsolutePath());
         for (var entry: validators.entrySet()){
             System.out.println(entry.getValue().supportedType().toString());
         }
@@ -55,7 +53,7 @@ class PluginLoaderTest {
     void invalidPath(){
         Map<RelatedIdentifierType, ValidatorInterface> validators = null;
         try {
-            PluginLoader.loadPlugins(new File("src/test/resources/plugins/invalid/test"));
+            PluginLoader.loadPlugins(new File("./invalid/test"));
         } catch (IOException e) {
             fail(e);
         } catch (ValidationWarning validationWarning) {
@@ -66,7 +64,7 @@ class PluginLoaderTest {
     void invalidPlugin() {
         Map<RelatedIdentifierType, ValidatorInterface> validators = null;
         try {
-            validators = PluginLoader.loadPlugins(new File("src/test/resources/invalid_plugins"));
+            validators = PluginLoader.loadPlugins(new File("./invalid_plugins"));
         } catch (Exception e) {
             fail(e);
         }
