@@ -13,20 +13,14 @@
  * limitations under the License.
  */
 
-package edu.kit.scc.dem.identifier_validator.exceptions;
+package edu.kit.datamanager.datacite.validate;
 
-import org.junit.jupiter.api.Test;
+import java.io.File;
+import java.io.FileFilter;
 
-class ValidationErrorTest {
+public class JARFileFilter implements FileFilter {
 
-    @Test
-    void newWithParam() {
-        Exception exception = new ValidationError("Test", new Exception());
+    public boolean accept(File f) {
+        return f.getName().toLowerCase().endsWith(".jar");
     }
-
-    @Test
-    void newWithoutParam() {
-        Exception exception = new ValidationError();
-    }
-
 }

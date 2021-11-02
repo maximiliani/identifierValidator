@@ -13,16 +13,18 @@
  * limitations under the License.
  */
 
-package edu.kit.scc.dem.identifier_validator.impl;
+package edu.kit.datamanager.datacite.validate.impl;
 
-import edu.kit.scc.dem.identifier_validator.ValidatorInterface;
-import edu.kit.scc.dem.identifier_validator.exceptions.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import edu.kit.datamanager.datacite.validate.ValidatorInterface;
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
+import org.datacite.schema.kernel_4.RelatedIdentifierType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class validates Handles with help of handle.net.
@@ -32,22 +34,40 @@ public class HandleNetValidator implements ValidatorInterface {
     Logger log = LoggerFactory.getLogger(HandleNetValidator.class);
 
     /**
-     * This method checks if a special schema is defined, removes it in some cases and validates it with another method.
+     * This method returns the type of the validator implementation.
      *
-     * @return true if the input is valid.
-     * @throws ValidationError   if the input is invalid.
-     * @throws ValidationWarning if there was an internal error, which doesn't mean directly that the input is invalid.
+     * @return element of the enum defined in the Datacite schema.
      */
     @Override
-    public boolean isValid(String input) throws ValidationWarning, ValidationError {
-        String regex = "^(hdl\\:\\/\\/|http\\:\\/\\/|https\\:\\/\\/|doi\\:)(.+)";
+    public RelatedIdentifierType supportedType() {
+        return RelatedIdentifierType.HANDLE;
+    }
+
+    /**
+     * This method must be implemented by any implementation.
+     * It validates an input and either returns true or throws an exception.
+     *
+     * @param input to validate
+     * @param type  of the input
+     * @return true if input is valid for the special type of implementation.
+     * @throws ValidationError   if the input is invalid and definitively unusable.
+     * @throws ValidationWarning if there is a chance that the input could be valid. (e.g. Validation server not reachable. Additional information should be provided with logs and the exception message).
+     */
+    @Override
+    public boolean isValid(String input, RelatedIdentifierType type) throws ValidationError, ValidationWarning {
+        if (type != supportedType()) {
+            LOG.warn("Illegal type of validator");
+            throw new ValidationWarning("Illegal type of Validator.");
+        }
+
+        String regex = "^(hdl://|http://|https://|doi:)(.+)";
         Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(input);
         if (matcher.find()) {
             if (matcher.group(1).equals("https://") || matcher.group(1).equals("http://"))
                 return isValidHTTPURL(matcher.group(0));
             else return isValidHandle(matcher.group(2));
-        } else throw new ValidationError("Invalid input", new ValidationError());
+        } else return isValidHandle(input);
     }
 
     /**
@@ -60,23 +80,29 @@ public class HandleNetValidator implements ValidatorInterface {
      * @return true if the record is downloadable
      * @throws ValidationWarning if an error occurs (e.g. no internet connection, invalid prefix or suffix). For further information read the error message or the log.
      */
-    public boolean isDownloadable(String serverAddress, String prefix, String suffix) throws ValidationWarning {
-        int status = 0;
-        status = getURLStatus(serverAddress + "/" + prefix + "/" + suffix);
-        log.debug(serverAddress + "/" + prefix + "/" + suffix);
-        log.debug(String.valueOf(status));
-        if (status != 200) {
-            log.warn("Either the suffix or the prefix might be invalid. Proving if prefix is valid...");
-            status = getURLStatus("https://hdl.handle.net/0.NA/" + prefix);
-            if (status != 200) {
-                log.error("The entered prefix is invalid!");
-                throw new ValidationWarning("Prefix not provable on handle.net", new ValidationError());
+    private boolean isDownloadable(String serverAddress, String prefix, String suffix) throws ValidationWarning, ValidationError {
+        ValidatorInterface urlValidator = new URLValidator();
+        AtomicBoolean fullValid = new AtomicBoolean(false);
+        log.debug("Server address: {}", serverAddress);
+        log.debug("Prefix: {}", prefix);
+        log.debug("Suffix: {}", suffix);
+        ignoringExc(() -> {
+            try {
+                fullValid.set(urlValidator.isValid(serverAddress + "/" + prefix + "/" + suffix));
+            } catch (ValidationError | ValidationWarning ignored) {
             }
-            log.info("The prefix {} is valid!", prefix);
-            throw new ValidationWarning("Prefix valid, but suffix not", new ValidationWarning());
+        });
+        if (fullValid.get()) {
+            LOG.info("The handle is valid!");
+            return true;
         }
-        log.info("The prefix and suffix are valid.");
-        return true;
+        log.warn("Either the suffix or the prefix might be invalid. Proving if prefix is valid...");
+        if (urlValidator.isValid("https://hdl.handle.net/0.NA/" + prefix)) {
+            log.info("The prefix {} is valid!", prefix);
+            throw new ValidationWarning("Prefix valid, but suffix not");
+        }
+        log.error("The entered prefix is invalid!");
+        throw new ValidationError("Prefix not provable on handle.net");
     }
 
     /**
@@ -87,7 +113,7 @@ public class HandleNetValidator implements ValidatorInterface {
      * @return true if the record is downloadable
      * @throws ValidationWarning if an error occurs (e.g. no internet connection, invalid prefix or suffix). For further information read the error message or the log.
      */
-    public boolean isDownloadable(String prefix, String suffix) throws ValidationWarning {
+    private boolean isDownloadable(String prefix, String suffix) throws ValidationWarning, ValidationError {
         return isDownloadable("http://hdl.handle.net/api/handles", prefix, suffix);
     }
 
@@ -100,13 +126,13 @@ public class HandleNetValidator implements ValidatorInterface {
      * @throws ValidationWarning from isDownloadable. Contains further information in the message or in the log.
      * @throws ValidationError   if the input is invalid.
      */
-    public boolean isValidHTTPURL(String url) throws ValidationWarning, ValidationError {
-        String regex = "(http|https)\\:\\/\\/(.+)\\/([A-Za-z0-9.]+)\\/([A-Za-z0-9.]+)";
+    private boolean isValidHTTPURL(String url) throws ValidationWarning, ValidationError {
+        String regex = "(http|https)://(.+)/([A-Za-z0-9.]+)/([A-Za-z0-9.]+)";
         Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(url);
         if (matcher.find()) {
             return isDownloadable((matcher.group(1) + "://" + matcher.group(2)), matcher.group(3), matcher.group(4));
-        } else throw new ValidationError("Invalid input", new ValidationError());
+        } else throw new ValidationError("Invalid input");
     }
 
     /**
@@ -118,12 +144,20 @@ public class HandleNetValidator implements ValidatorInterface {
      * @throws ValidationWarning from isDownloadable. Contains further information in the message or in the log.
      * @throws ValidationError   if the input is invalid.
      */
-    public boolean isValidHandle(String handle) throws ValidationWarning, ValidationError {
-        String regex = "([A-Za-z0-9.]+)\\/([A-Za-z0-9.]+)";
+    private boolean isValidHandle(String handle) throws ValidationWarning, ValidationError {
+        String regex = "([A-Za-z0-9.]+)/([A-Za-z0-9.]+)";
         Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(handle);
         if (matcher.find()) {
             return isDownloadable(matcher.group(1), matcher.group(2));
-        } else throw new ValidationError("Invalid input", new ValidationError());
+        } else throw new ValidationError("Invalid input");
+    }
+
+    private static void ignoringExc(Runnable r) {
+        try {
+            r.run();
+        }
+        catch (Exception ignored) {
+        }
     }
 }

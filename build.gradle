@@ -1,26 +1,44 @@
 plugins {
     id 'java'
     id 'jacoco'
+    id 'application'
+    id "com.github.johnrengelman.shadow" version "7.1.0"
 }
 
-group 'edu.kit.scc.dem'
+mainClassName = 'edu.kit.datamanager.datacite.validate.GenericValidator'
+group 'edu.kit.datamanager'
 version '1.0-SNAPSHOT'
+
+println "Building ${name} version: ${version}"
+println "Running gradle version: $gradle.gradleVersion"
+println "JDK version: ${JavaVersion.current()}"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'org.junit.jupiter:junit-jupiter:5.8.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
+    implementation "edu.kit.datamanager:service-base:0.3.0"
+    implementation 'org.springframework.boot:spring-boot-starter-amqp:2.5.5'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.5.5'
+    implementation 'org.springframework.boot:spring-boot-starter-security:2.5.5'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:2.5.5'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.5.5'
+
+    implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     testCompileOnly 'junit:junit:4.13.2'
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.8.0'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.8.1'
+
     implementation 'org.slf4j:slf4j-api:1.7.32'
-    implementation "ch.qos.logback:logback-classic:1.2.5"
-    implementation 'org.mockito:mockito-core:3.12.4'
-    testImplementation 'org.mockito:mockito-inline:3.12.4'
-    testImplementation 'org.mockito:mockito-junit-jupiter:3.12.4'
+    implementation 'ch.qos.logback:logback-classic:1.2.6'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'edu.kit.datamanager.datacite.validate.GenericValidator'
+    }
 }
 
 test {
@@ -30,8 +48,6 @@ test {
 jacocoTestReport {
     dependsOn test
     reports {
-        html.enabled = false
-        csv.enabled = false
-        xml.enabled = true
+        xml.required = true
     }
 }

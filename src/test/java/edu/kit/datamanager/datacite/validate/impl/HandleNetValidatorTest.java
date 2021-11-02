@@ -13,26 +13,21 @@
  * limitations under the License.
  */
 
-package edu.kit.scc.dem.identifier_validator.impl;
+package edu.kit.datamanager.datacite.validate.impl;
 
-import edu.kit.scc.dem.identifier_validator.exceptions.ValidationError;
-import edu.kit.scc.dem.identifier_validator.exceptions.ValidationWarning;
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
+import org.datacite.schema.kernel_4.RelatedIdentifierType;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(MockitoJUnitRunner.class)
-@ExtendWith(MockitoExtension.class)
 class HandleNetValidatorTest {
 
     HandleNetValidator validator = new HandleNetValidator();
 
     @Test
-    void valid_isValid() {
+    void valid() {
         try {
             assertTrue(validator.isValid("hdl://10.1038/nphys1170"));
         } catch (Exception e) {
@@ -41,29 +36,37 @@ class HandleNetValidatorTest {
     }
 
     @Test
-    void invalid_isValid() {
+    void invalidType() {
         try {
-            assertFalse(validator.isValid("10.1038/auifz8zhunjkad"));
-        } catch (ValidationWarning e) {
-            fail(e);
+            assertFalse(validator.isValid("hdl://10.1038/nphys1170", RelatedIdentifierType.AR_XIV));
         } catch (ValidationError e) {
-            ;
+            fail(e);
+        } catch (ValidationWarning ignored) {
         }
     }
 
     @Test
-    void invalidPrefix_isValid() {
+    void invalid() {
+        try {
+            assertFalse(validator.isValid("10.1038/auifz8zhunjkad"));
+        } catch (ValidationWarning ignored) {
+        } catch (ValidationError e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void invalidPrefix() {
         try {
             assertFalse(validator.isValid("testdgsdfg/auifz8zhunjkad"));
         } catch (ValidationWarning e) {
             fail(e);
-        } catch (ValidationError e) {
-            ;
+        } catch (ValidationError ignored) {
         }
     }
 
     @Test
-    void valid_isValidHTTP() {
+    void validHTTP() {
         try {
             assertTrue(validator.isValid("http://hdl.handle.net/api/handles/10.1038/nphys1170"));
         } catch (Exception e) {
@@ -72,7 +75,7 @@ class HandleNetValidatorTest {
     }
 
     @Test
-    void valid_isValidHTTPS() {
+    void validHTTPS() {
         try {
             assertTrue(validator.isValid("https://hdl.handle.net/api/handles/10.1038/nphys1170"));
         } catch (Exception e) {
@@ -81,87 +84,81 @@ class HandleNetValidatorTest {
     }
 
     @Test
-    void invalid_isValidHTTPURL() {
+    void invalidHTTPS() {
         try {
             assertFalse(validator.isValid("https://google.com"));
         } catch (ValidationWarning e) {
             fail(e);
-        } catch (ValidationError e) {
-            ;
+        } catch (ValidationError ignored) {
         }
     }
 
     @Test
-    void valid_isValidHandle() {
+    void validHandle() {
         try {
-            assertTrue(validator.isValidHandle("10.1038/nphys1170"));
+            assertTrue(validator.isValid("10.1038/nphys1170"));
         } catch (Exception e) {
             fail(e);
         }
     }
 
     @Test
-    void invalid_isValidHandleScheme() {
+    void invalidHandleScheme() {
         try {
-            assertFalse(validator.isValidHandle("test"));
+            assertFalse(validator.isValid("test"));
         } catch (ValidationWarning e) {
             fail(e);
-        } catch (ValidationError e) {
-            ;
+        } catch (ValidationError ignored) {
         }
     }
 
     @Test
-    void valid_isDownloadable() {
+    void invalidURL() {
         try {
-            assertTrue(validator.isDownloadable("http://hdl.handle.net/api/handles", "10.1038", "nphys1170"));
-        } catch (Exception e) {
+            assertFalse(validator.isValid("hdl.handle/10.1038/nphys1170"));
+        } catch (ValidationWarning e) {
             fail(e);
+        } catch (ValidationError ignored) {
         }
     }
 
     @Test
-    void invalidURL_isDownloadable() {
+    void serverNotReachable() {
         try {
-            assertFalse(validator.isDownloadable("hdl.handle", "10.1038", "nphys1170"));
-        } catch (ValidationWarning e) {
-            ;
+            assertFalse(validator.isValid("https://hdl.test.example/10.1038/nphys1170"));
+        } catch (ValidationWarning ignored) {
+        } catch (ValidationError validationError) {
+            fail(validationError);
         }
     }
 
     @Test
-    void serverNotReachable_isDownloadable() {
+    void invalidPrefixInURL() {
         try {
-            assertFalse(validator.isDownloadable("https://hdl.test.example", "10.1038", "nphys1170"));
-        } catch (ValidationWarning e) {
-            ;
+            assertFalse(validator.isValid("http://hdl.handle.net/api/handles/10.10385/nphys1170"));
+        } catch (ValidationError ignored) {
+        } catch (ValidationWarning validationWarning) {
+            fail(validationWarning);
         }
     }
 
     @Test
-    void invalidPrefix_isDownloadable() {
+    void invalidSuffix() {
         try {
-            assertFalse(validator.isDownloadable("http://hdl.handle.net/api/handles", "10.10385", "nphys1170"));
-        } catch (ValidationWarning e) {
-            ;
+            assertFalse(validator.isValid("10.1038/nphys1170.345678"));
+        } catch (ValidationWarning ignored) {
+        } catch (ValidationError validationError) {
+            fail(validationError);
         }
     }
 
     @Test
-    void invalidSuffix_isDownloadable() {
+    void invalidCharacters() {
         try {
-            assertFalse(validator.isDownloadable("10.1038", "nphys1170.345678"));
+            assertFalse(validator.isValid("http://google.com/®¡“¢∂‚/®¡“¢∂‚"));
         } catch (ValidationWarning e) {
-            ;
-        }
-    }
-
-    @Test
-    void invalidCharacters_isDownloadable() {
-        try {
-            assertFalse(validator.isDownloadable("http://google.com", "®¡“¢∂‚", "®¡“¢∂‚"));
-        } catch (ValidationWarning e) {
-            ;
+            fail(e);
+        } catch (ValidationError ignored) {
         }
     }
 }

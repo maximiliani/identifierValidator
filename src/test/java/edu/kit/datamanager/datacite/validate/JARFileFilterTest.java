@@ -13,22 +13,23 @@
  * limitations under the License.
  */
 
-package edu.kit.scc.dem.identifier_validator.exceptions;
+package edu.kit.datamanager.datacite.validate;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-class ValidationWarningTest {
+class JARFileFilterTest {
 
     @Test
-    void newWithParam() {
-        Exception exception = new ValidationWarning("Test", new Exception());
+    void invalidFile() {
+        assertFalse(new JARFileFilter().accept(new File("test.xml")));
     }
 
     @Test
-    void newWithoutParam() {
-        Exception exception = new ValidationWarning();
+    void validFile() {
+        assertTrue(new JARFileFilter().accept(new File("test.jar")));
     }
-
 }

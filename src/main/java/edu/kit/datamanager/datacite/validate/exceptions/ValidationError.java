@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.kit.scc.dem.identifier_validator.exceptions;
+package edu.kit.datamanager.datacite.validate.exceptions;
 
 /**
  * This class defines a custom exception for errors during the validation process.
@@ -35,10 +35,12 @@ public class ValidationError extends Exception {
     }
 
     /**
-     * This is an empty constructor with no additional information.
+     * This constructor expects an errorMessage for more information.
+     *
+     * @param errorMessage is a description about what happened.
      */
-    public ValidationError() {
-        super();
+    public ValidationError(String errorMessage) {
+        super(errorMessage);
     }
 
 }

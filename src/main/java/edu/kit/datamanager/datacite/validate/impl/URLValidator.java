@@ -13,11 +13,12 @@
  * limitations under the License.
  */
 
-package edu.kit.scc.dem.identifier_validator;
+package edu.kit.datamanager.datacite.validate.impl;
 
-import edu.kit.scc.dem.identifier_validator.exceptions.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import edu.kit.datamanager.datacite.validate.ValidatorInterface;
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
+import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
+import org.datacite.schema.kernel_4.RelatedIdentifierType;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -25,50 +26,53 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-/**
- * This interface provides a method which is necessary to validate things.
- */
-public interface ValidatorInterface {
-
-    Logger log = LoggerFactory.getLogger(ValidatorInterface.class);
+public class URLValidator implements ValidatorInterface {
+    @Override
+    public RelatedIdentifierType supportedType() {
+        return RelatedIdentifierType.URL;
+    }
 
     /**
      * This method must be implemented by any implementation.
      * It validates an input and either returns true or throws an exception.
      *
      * @param input to validate
-     * @return true if input is valid for the special type of implementation
+     * @param type  of the input
+     * @return true if input is valid for the special type of implementation.
      * @throws ValidationError   if the input is invalid and definitively unusable.
      * @throws ValidationWarning if there is a chance that the input could be valid. (e.g. Validation server not reachable. Additional information should be provided with logs and the exception message.
      */
-    boolean isValid(String input) throws ValidationError, ValidationWarning;
+    @Override
+    public boolean isValid(String input, RelatedIdentifierType type) throws ValidationError, ValidationWarning {
+        if (type != supportedType()) {
+            LOG.warn("Illegal type of validator");
+            throw new ValidationWarning("Illegal type of Validator.");
+        }
 
-    /**
-     * This method checks if a URL is available.
-     *
-     * @param url to check
-     * @return HTTP status code (e.g. 200 for OK)
-     * @throws ValidationWarning if there is an error (e.g. server not reachable).
-     */
-    default int getURLStatus(String url) throws ValidationWarning {
         URL urlHandler = null;
         HttpURLConnection con = null;
-        int status = 0;
+        LOG.debug("URL: {}", input);
+        int status;
         try {
-            urlHandler = new URL(url);
+            urlHandler = new URL(input);
             con = (HttpURLConnection) urlHandler.openConnection();
             con.setRequestMethod("GET");
             status = con.getResponseCode();
+            LOG.debug("HTTP status: {}", status);
+            if (status != 200) {
+                LOG.error("Invalid URL");
+                throw new ValidationError("Invalid URL!");
+            }
+            return true;
         } catch (ProtocolException e) {
-            log.warn("Error while setting request method");
+            LOG.warn("Error while setting request method");
             throw new ValidationWarning("Error setting request method", e);
         } catch (MalformedURLException e) {
-            log.warn("Invalid URL");
-            throw new ValidationWarning("Invalid URL", e);
+            LOG.warn("Invalid URL");
+            throw new ValidationError("Invalid URL", e);
         } catch (IOException e) {
-            log.warn("IOException: Please check if you have internet access.");
-            throw new ValidationWarning("IOException: Do you have an internet connection?", e);
+            LOG.warn("No connection to the server possible. Do you have an internet connection?");
+            throw new ValidationWarning("No connection to the server possible. Do you have an internet connection?", e);
         }
-        return status;
     }
 }
