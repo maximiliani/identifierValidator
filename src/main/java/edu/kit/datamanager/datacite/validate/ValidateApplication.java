@@ -10,5 +10,4 @@ public class ValidateApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ValidateApplication.class, args);
 	}
-
 }
