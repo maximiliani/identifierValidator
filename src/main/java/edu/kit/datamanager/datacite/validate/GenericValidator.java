@@ -67,6 +67,10 @@ public class GenericValidator {
         }
     }
 
+    public Map getValidators(){
+        return validators;
+    }
+
     public static void main(String[] args) {
         for (var entry: validators.entrySet()){
             System.out.println(entry.getValue().supportedType().toString());

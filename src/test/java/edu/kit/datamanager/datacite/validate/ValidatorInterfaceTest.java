@@ -15,13 +15,12 @@
 
 package edu.kit.datamanager.datacite.validate;
 
-import edu.kit.datamanager.datacite.validate.ValidatorInterface;
 import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
 import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
 import edu.kit.datamanager.datacite.validate.impl.HandleNetValidator;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class ValidatorInterfaceTest {
 
