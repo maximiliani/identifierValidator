@@ -15,20 +15,29 @@
 
 package edu.kit.datamanager.datacite.validate;
 
+import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.runner.RunWith;
+import org.junit.runner.manipulation.Alphanumeric;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class RESTAPIControllerTest {
+
+    @Before
+    @Test
+    void aMain() {
+        ValidateApplication.main(new String[]{});
+    }
 
     @Test
     void validDOIInput() {
