@@ -17,6 +17,7 @@ package edu.kit.datamanager.datacite.validate;
 
 import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
 import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
+import edu.kit.datamanager.datacite.validate.plugin.PluginLoader;
 import org.datacite.schema.kernel_4.RelatedIdentifierType;
 import org.junit.jupiter.api.Test;
 

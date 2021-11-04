@@ -156,8 +156,7 @@ public class HandleNetValidator implements ValidatorInterface {
     private static void ignoringExc(Runnable r) {
         try {
             r.run();
-        }
-        catch (Exception ignored) {
+        } catch (Exception ignored) {
         }
     }
 }

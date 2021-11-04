@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Identifier Validator</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container my-3">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h2>Identifier Validator</h2>
+            <form th:action="@{/validate}" th:object="${validatorInput}" method="post">
+                <ul th:if="${#fields.hasErrors('*')}">
+                    <li th:each="error : ${#fields.errors('*')}" th:text="${error}">error</li>
+                </ul>
+                <div class="form-row">
+
+                    <div class="col-md-6 form-group">
+                        <label>Type</label>
+                        <select class="form-control" th:field="*{type}">
+                            <option value="">Choose...</option>
+                            <option th:each="type : ${types}"
+                                    th:text="${type}"
+                                    th:value="${type}">
+                        </select>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>Input</label>
+                        <input type="text" class="form-control" th:field="*{input}">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block mt-3">Validate Input</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

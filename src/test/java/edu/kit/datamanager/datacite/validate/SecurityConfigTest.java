@@ -15,11 +15,10 @@
 
 package edu.kit.datamanager.datacite.validate;
 
+import edu.kit.datamanager.datacite.validate.rest.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class SecurityConfigTest {
 

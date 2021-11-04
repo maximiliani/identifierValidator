@@ -15,6 +15,7 @@
 
 package edu.kit.datamanager.datacite.validate;
 
+import edu.kit.datamanager.datacite.validate.plugin.JARFileFilter;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

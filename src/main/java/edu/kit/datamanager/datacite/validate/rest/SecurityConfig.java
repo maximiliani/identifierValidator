@@ -13,14 +13,19 @@
  * limitations under the License.
  */
 
-package edu.kit.datamanager.datacite.validate;
+package edu.kit.datamanager.datacite.validate.rest;
 
-import java.io.File;
-import java.io.FileFilter;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-public class JARFileFilter implements FileFilter {
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    public boolean accept(File f) {
-        return f.getName().toLowerCase().endsWith(".jar");
+    @Override
+    protected void configure(HttpSecurity security) throws Exception {
+        security.httpBasic().disable();
     }
 }

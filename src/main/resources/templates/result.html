@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Result</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container my-3">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h2>Result</h2>
+            <div class="my-3">
+                <p><strong>Type:</strong> <span th:text="${validatorInput.type}"></span></p>
+                <p><strong>Input:</strong> <span th:text="${validatorInput.input}"></span></p>
+                <p><strong>Valid:</strong> <span th:text="${validatorInput.valid} ? 'Valid' : 'Invalid'"></span></p>
+                <p><strong>Message:</strong> <span th:text="${validatorInput.message}"></span></p>
+            </div>
+            <a th:href="@{/}">Validate another identifier</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

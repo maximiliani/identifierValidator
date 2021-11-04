@@ -11,12 +11,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * This class was largely taken from this website: https://www.java-blog-buch.de/d-plugin-entwicklung-in-java/2/
  */
 
-package edu.kit.datamanager.datacite.validate;
+package edu.kit.datamanager.datacite.validate.plugin;
 
+import edu.kit.datamanager.datacite.validate.ValidatorInterface;
 import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
 import org.datacite.schema.kernel_4.RelatedIdentifierType;
 import org.slf4j.Logger;
@@ -39,9 +38,9 @@ import java.util.jar.JarInputStream;
 public class PluginLoader {
 
     static Logger LOG = LoggerFactory.getLogger(PluginLoader.class);
-    
+
     public static Map<RelatedIdentifierType, ValidatorInterface> loadPlugins(File plugDir) throws IOException, ValidationWarning {
-        if(plugDir == null || plugDir.getAbsolutePath().isBlank()) throw new ValidationWarning("Empty input!");
+        if (plugDir == null || plugDir.getAbsolutePath().isBlank()) throw new ValidationWarning("Empty input!");
         File[] plugJars = plugDir.listFiles(new JARFileFilter());
         if (plugJars == null || plugJars.length < 1) throw new ValidationWarning("No plugins found.");
         ClassLoader cl = new URLClassLoader(PluginLoader.fileArrayToURLArray(plugJars));
