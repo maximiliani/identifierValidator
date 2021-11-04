@@ -69,7 +69,7 @@ class RESTAPIControllerTest {
 
         ResponseEntity<String> productEntity
                 = restTemplate.getForEntity(url, String.class);
-        Assertions.assertEquals(productEntity.getStatusCode(), HttpStatus.ACCEPTED);
+        Assertions.assertEquals(productEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
         Assertions.assertNotNull(productEntity.getBody());
         Assertions.assertEquals(productEntity.getBody(), output);
     }
