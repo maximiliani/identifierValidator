@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-package edu.kit.datamanager.datacite.validate;
+package edu.kit.datamanager.datacite.validate.rest;
 
+import edu.kit.datamanager.datacite.validate.ValidateApplication;
 import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;

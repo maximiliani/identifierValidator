@@ -17,11 +17,10 @@
                     <li th:each="error : ${#fields.errors('*')}" th:text="${error}">error</li>
                 </ul>
                 <div class="form-row">
-
                     <div class="col-md-6 form-group">
                         <label>Type</label>
-                        <select class="form-control" th:field="*{type}">
-                            <option value="">Choose...</option>
+                        <select class="form-control" th:field="*{type}" required>
+                            <option value="" selected disabled hidden >Choose...</option>
                             <option th:each="type : ${types}"
                                     th:text="${type}"
                                     th:value="${type}">
@@ -29,7 +28,7 @@
                     </div>
                     <div class="col-md-6 form-group">
                         <label>Input</label>
-                        <input type="text" class="form-control" th:field="*{input}">
+                        <input type="text" class="form-control" th:field="*{input}" required>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block mt-3">Validate Input</button>

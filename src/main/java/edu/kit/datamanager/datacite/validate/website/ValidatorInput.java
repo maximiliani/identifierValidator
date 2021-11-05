@@ -24,7 +24,10 @@ public class ValidatorInput implements Serializable {
     }
 
     public ValidatorInput() {
-
+        type = "";
+        input = "";
+        message = "";
+        valid = false;
     }
 
     @Override
@@ -32,8 +35,40 @@ public class ValidatorInput implements Serializable {
         return "ValidatorInput{" +
                 "type='" + type + '\'' +
                 ", input='" + input + '\'' +
-                ", reason='" + message + '\'' +
+                ", message='" + message + '\'' +
                 ", valid=" + valid +
                 '}';
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getInput() {
+        return input;
+    }
+
+    public void setInput(String input) {
+        this.input = input;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Boolean getValid() {
+        return valid;
+    }
+
+    public void setValid(Boolean valid) {
+        this.valid = valid;
     }
 }

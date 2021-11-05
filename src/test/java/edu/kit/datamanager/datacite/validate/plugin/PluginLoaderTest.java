@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-package edu.kit.datamanager.datacite.validate;
+package edu.kit.datamanager.datacite.validate.plugin;
 
+import edu.kit.datamanager.datacite.validate.ValidatorInterface;
 import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
 import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
 import edu.kit.datamanager.datacite.validate.plugin.PluginLoader;

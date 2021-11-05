@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.kit.datamanager.datacite.validate;
+package edu.kit.datamanager.datacite.validate.rest;
 
 import edu.kit.datamanager.datacite.validate.rest.SecurityConfig;
 import org.junit.jupiter.api.Test;

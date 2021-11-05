@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class ValidatorInputController {
 
     @GetMapping("")
-    public String createProjectForm(Model model) {
+    public String sendForm(Model model) {
 
         model.addAttribute("validatorInput", new ValidatorInput());
         model.addAttribute("types", GenericValidator.soleInstance().getListOfAvailableValidators());
@@ -21,7 +21,7 @@ public class ValidatorInputController {
     }
 
     @PostMapping("/validate")
-    public String saveProjectSubmission(@ModelAttribute ValidatorInput validatorInput) {
+    public String sendResult(@ModelAttribute ValidatorInput validatorInput) {
         try {
             if (GenericValidator.soleInstance().isValid(validatorInput.input, validatorInput.type))
                 validatorInput.valid = true;
