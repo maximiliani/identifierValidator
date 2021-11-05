@@ -44,8 +44,20 @@ class ValidatorInputControllerTest {
     }
 
     @Test
-    public void testResult() throws Exception {
+    public void validTestResult() throws Exception {
         ValidatorInputController controller = new ValidatorInputController();
         assertEquals(controller.sendResult(new ValidatorInput("URL","https://google.com")),"result");
+    }
+
+    @Test
+    public void errorTestResult() throws Exception {
+        ValidatorInputController controller = new ValidatorInputController();
+        assertEquals(controller.sendResult(new ValidatorInput("URL","test.example")),"result");
+    }
+
+    @Test
+    public void warningTestResult() throws Exception {
+        ValidatorInputController controller = new ValidatorInputController();
+        assertEquals(controller.sendResult(new ValidatorInput("DOI","10.1038/test")),"result");
     }
 }
