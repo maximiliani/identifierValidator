@@ -13,19 +13,20 @@
  * limitations under the License.
  */
 
-package edu.kit.datamanager.datacite.validate;
+package edu.kit.datamanager.datacite.validate.plugin;
 
+import edu.kit.datamanager.datacite.validate.ValidatorInterface;
 import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
 import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
+import edu.kit.datamanager.datacite.validate.plugin.PluginLoader;
 import org.datacite.schema.kernel_4.RelatedIdentifierType;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class PluginLoaderTest {
 

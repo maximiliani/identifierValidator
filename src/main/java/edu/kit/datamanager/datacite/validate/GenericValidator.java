@@ -19,12 +19,15 @@ import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
 import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
 import edu.kit.datamanager.datacite.validate.impl.HandleNetValidator;
 import edu.kit.datamanager.datacite.validate.impl.URLValidator;
+import edu.kit.datamanager.datacite.validate.plugin.PluginLoader;
 import org.datacite.schema.kernel_4.RelatedIdentifierType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GenericValidator {
@@ -57,18 +60,39 @@ public class GenericValidator {
     }
 
     public boolean isValid(String input, RelatedIdentifierType type) throws ValidationWarning, ValidationError {
-        if (validators.containsKey(type)){
+        if (validators.containsKey(type)) {
             if (validators.get(type).isValid(input, type)) LOG.info("Valid input and valid input type!");
             return true;
-        }
-        else {
+        } else {
             LOG.warn("No matching validator found. Please check your input and plugins.");
             throw new ValidationWarning("No matching validator found. Please check your input and plugins.");
         }
     }
 
+    public boolean isValid(String input, String type) throws ValidationWarning, ValidationError {
+        for (var entry : validators.entrySet()) {
+            if (entry.getKey().toString().equals(type)) {
+                if (entry.getValue().isValid(input)) return true;
+            }
+        }
+        throw new ValidationError("Invalid Type!");
+    }
+
+    public Map getValidators() {
+        return validators;
+    }
+
+    public List<String> getListOfAvailableValidators() {
+        Map<RelatedIdentifierType, ValidatorInterface> map = GenericValidator.soleInstance().getValidators();
+        List<String> result = new ArrayList<>();
+        for (var entry : map.entrySet()) {
+            result.add(entry.getKey().toString());
+        }
+        return result;
+    }
+
     public static void main(String[] args) {
-        for (var entry: validators.entrySet()){
+        for (var entry : validators.entrySet()) {
             System.out.println(entry.getValue().supportedType().toString());
         }
     }

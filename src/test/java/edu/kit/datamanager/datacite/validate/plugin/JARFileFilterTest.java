@@ -13,28 +13,25 @@
  * limitations under the License.
  */
 
-package edu.kit.datamanager.datacite.validate;
+package edu.kit.datamanager.datacite.validate.plugin;
 
-import edu.kit.datamanager.datacite.validate.exceptions.ValidationError;
-import edu.kit.datamanager.datacite.validate.exceptions.ValidationWarning;
-import edu.kit.datamanager.datacite.validate.impl.HandleNetValidator;
+import edu.kit.datamanager.datacite.validate.plugin.JARFileFilter;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import java.io.File;
 
-class ValidatorInterfaceTest {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    ValidatorInterface validatorInterface = new HandleNetValidator();
+class JARFileFilterTest {
 
     @Test
-    void valid_isValid() {
-        try {
-            validatorInterface.isValid("hdl://10.1038/nphys1170");
-        } catch (ValidationError | ValidationWarning e) {
-            fail(e);
-        }
+    void invalidFile() {
+        assertFalse(new JARFileFilter().accept(new File("test.xml")));
     }
 
-
-
+    @Test
+    void validFile() {
+        assertTrue(new JARFileFilter().accept(new File("test.jar")));
+    }
 }

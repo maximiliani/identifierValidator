@@ -13,23 +13,19 @@
  * limitations under the License.
  */
 
-package edu.kit.datamanager.datacite.validate;
+package edu.kit.datamanager.datacite.validate.rest;
 
-import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-import java.io.File;
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class JARFileFilterTest {
-
-    @Test
-    void invalidFile() {
-        assertFalse(new JARFileFilter().accept(new File("test.xml")));
-    }
-
-    @Test
-    void validFile() {
-        assertTrue(new JARFileFilter().accept(new File("test.jar")));
+    @Override
+    protected void configure(HttpSecurity security) throws Exception {
+        security.httpBasic().disable();
     }
 }

@@ -13,14 +13,23 @@
  * limitations under the License.
  */
 
-package edu.kit.datamanager.datacite.validate;
+package edu.kit.datamanager.datacite.validate.rest;
 
-import java.io.File;
-import java.io.FileFilter;
+import edu.kit.datamanager.datacite.validate.rest.SecurityConfig;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
-public class JARFileFilter implements FileFilter {
+class SecurityConfigTest {
 
-    public boolean accept(File f) {
-        return f.getName().toLowerCase().endsWith(".jar");
+    @Autowired
+    SecurityConfig config;
+
+    @Autowired
+    HttpSecurity security;
+
+    @Test
+    public void constructor(){
+        SecurityConfig conf = new SecurityConfig();
     }
 }
